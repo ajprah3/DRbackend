@@ -5,7 +5,7 @@ The function performs the following operations:
 1. Downloads the PDF file from S3.
 2. Splits the PDF into chunks of specified page size (for example, one page per chunk).
 3. Uploads each PDF chunk to a temporary location in the same S3 bucket.
-4. Logs the processing status of each chunk and its upload to S3.
+4. Logs the processing status of each chunk and its upload to S3. # 0. Testing Code Deployment - Backend Infra Caden Nelson
 5. Starts an AWS Step Functions execution with metadata about the uploaded chunks.
 
 """
