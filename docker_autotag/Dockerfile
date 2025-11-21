@@ -1,11 +1,11 @@
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim-buster
+FROM python:3:10-slim-bookworm
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . /app
+COPY autotag.py requirements.txt /app/
 
 # Create required directories
 RUN mkdir -p /output/AutotagPDF \
