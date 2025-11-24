@@ -1,4 +1,5 @@
 version: 0.2
+# Phase 4 buildspec security fixes by Bart
 
 phases:
   install:
