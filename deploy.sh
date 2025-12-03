@@ -146,12 +146,12 @@ deploy_backend_solution() {
                     }
                 }
             }' \
-            --region $REGION 2>/dev/null || {
+            --region "$REGION" 2>/dev/null || {
             print_error "Failed to create BDA project. Please ensure you have bedrock-data-automation permissions."
             exit 1
         })
 
-        BDA_PROJECT_ARN=$(echo $BDA_RESPONSE | jq -r '.projectArn')
+        BDA_PROJECT_ARN=$(echo "$BDA_RESPONSE" | jq -r '.projectArn')
         BUCKET_NAME="pdf2html-bucket-$ACCOUNT_ID-$REGION"
         
         print_success "✅ BDA project created successfully!"
@@ -420,13 +420,13 @@ EOF
         BUILD_IMAGE="aws/codebuild/amazonlinux-x86_64-standard:5.0"
         COMPUTE_TYPE="BUILD_GENERAL1_SMALL"
         PRIVILEGED_MODE="false"
-        SOURCE_VERSION="pdf2html-subtree"  # Use pdf2html-subtree since buildspec only exists there
+        SOURCE_VERSION="nelson"  # Use pdf2html-subtree since buildspec only exists there
         BUILDSPEC_FILE="buildspec-unified.yml"
     else
         BUILD_IMAGE="aws/codebuild/amazonlinux2-x86_64-standard:5.0"
         COMPUTE_TYPE="BUILD_GENERAL1_LARGE"
         PRIVILEGED_MODE="true"
-        SOURCE_VERSION="pdf2html-subtree"
+        SOURCE_VERSION="nelson"
         BUILDSPEC_FILE="buildspec-unified.yml"
     fi
 
@@ -509,7 +509,7 @@ EOF
     DOTS=0
     LAST_STATUS=""
     while true; do
-        BUILD_STATUS=$(aws codebuild batch-get-builds --ids $BUILD_ID --query 'builds[0].buildStatus' --output text)
+        BUILD_STATUS=$(aws codebuild batch-get-builds --ids "$BUILD_ID" --query 'builds[0].buildStatus' --output text)
         
         # Show status change
         if [ "$BUILD_STATUS" != "$LAST_STATUS" ]; then
@@ -535,11 +535,11 @@ EOF
                 
                 sleep 5
                 
-                LATEST_STREAM=$(aws logs describe-log-streams --log-group-name $LOG_GROUP --order-by LastEventTime --descending --max-items 1 --query 'logStreams[0].logStreamName' --output text 2>/dev/null || echo "")
+                LATEST_STREAM=$(aws logs describe-log-streams --log-group-name "$LOG_GROUP" --order-by LastEventTime --descending --max-items 1 --query 'logStreams[0].logStreamName' --output text 2>/dev/null || echo "")
                 
                 if [ -n "$LATEST_STREAM" ] && [ "$LATEST_STREAM" != "None" ]; then
                     print_error "Recent build logs:"
-                    aws logs get-log-events --log-group-name $LOG_GROUP --log-stream-name $LATEST_STREAM --query 'events[-30:].message' --output text 2>/dev/null || print_error "Could not retrieve logs"
+                    aws logs get-log-events --log-group-name "$LOG_GROUP" --log-stream-name "$LATEST_STREAM" --query 'events[-30:].message' --output text 2>/dev/null || print_error "Could not retrieve logs"
                 else
                     print_error "Could not retrieve build logs. Check CodeBuild console for details."
                 fi
@@ -861,7 +861,7 @@ print_success "✅ AWS credentials verified. Account: $ACCOUNT_ID, Region: $REGI
 echo ""
 
 # GitHub repository URL (hardcoded)
-GITHUB_URL="https://github.com/ASUCICREPO/PDF_Accessibility.git"
+GITHUB_URL="https://github.com/ajprah3/DRbackend.git"
 print_success "   Repository: $GITHUB_URL ✅"
 echo ""
 
