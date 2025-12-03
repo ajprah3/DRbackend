@@ -146,12 +146,12 @@ deploy_backend_solution() {
                     }
                 }
             }' \
-            --region $REGION 2>/dev/null || {
+            --region "$REGION" 2>/dev/null || {
             print_error "Failed to create BDA project. Please ensure you have bedrock-data-automation permissions."
             exit 1
         })
 
-        BDA_PROJECT_ARN=$(echo $BDA_RESPONSE | jq -r '.projectArn')
+        BDA_PROJECT_ARN=$(echo "$BDA_RESPONSE" | jq -r '.projectArn')
         BUCKET_NAME="pdf2html-bucket-$ACCOUNT_ID-$REGION"
         
         print_success "✅ BDA project created successfully!"
@@ -509,7 +509,7 @@ EOF
     DOTS=0
     LAST_STATUS=""
     while true; do
-        BUILD_STATUS=$(aws codebuild batch-get-builds --ids $BUILD_ID --query 'builds[0].buildStatus' --output text)
+        BUILD_STATUS=$(aws codebuild batch-get-builds --ids "$BUILD_ID" --query 'builds[0].buildStatus' --output text)
         
         # Show status change
         if [ "$BUILD_STATUS" != "$LAST_STATUS" ]; then
@@ -535,11 +535,11 @@ EOF
                 
                 sleep 5
                 
-                LATEST_STREAM=$(aws logs describe-log-streams --log-group-name $LOG_GROUP --order-by LastEventTime --descending --max-items 1 --query 'logStreams[0].logStreamName' --output text 2>/dev/null || echo "")
+                LATEST_STREAM=$(aws logs describe-log-streams --log-group-name "$LOG_GROUP" --order-by LastEventTime --descending --max-items 1 --query 'logStreams[0].logStreamName' --output text 2>/dev/null || echo "")
                 
                 if [ -n "$LATEST_STREAM" ] && [ "$LATEST_STREAM" != "None" ]; then
                     print_error "Recent build logs:"
-                    aws logs get-log-events --log-group-name $LOG_GROUP --log-stream-name $LATEST_STREAM --query 'events[-30:].message' --output text 2>/dev/null || print_error "Could not retrieve logs"
+                    aws logs get-log-events --log-group-name "$LOG_GROUP" --log-stream-name "$LATEST_STREAM" --query 'events[-30:].message' --output text 2>/dev/null || print_error "Could not retrieve logs"
                 else
                     print_error "Could not retrieve build logs. Check CodeBuild console for details."
                 fi
