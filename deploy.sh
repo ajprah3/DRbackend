@@ -632,11 +632,11 @@ deploy_ui() {
     local pdf_to_pdf_bucket="Null"
     local pdf_to_html_bucket="Null"
     
-    if [[ " ${DEPLOYED_SOLUTIONS[@]} " =~ " pdf2pdf " ]]; then
+    if [[ " ${DEPLOYED_SOLUTIONS[*]} " =~ " pdf2pdf " ]]; then
         pdf_to_pdf_bucket="$PDF2PDF_BUCKET"
     fi
     
-    if [[ " ${DEPLOYED_SOLUTIONS[@]} " =~ " pdf2html " ]]; then
+    if [[ " ${DEPLOYED_SOLUTIONS[*]} " =~ " pdf2html " ]]; then
         pdf_to_html_bucket="$PDF2HTML_BUCKET"
     fi
     
